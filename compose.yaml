@@ -24,7 +24,8 @@ services:
       POSTGRES_PASSWORD: fleet
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+      - ./docker/postgres/schema.sql:/schema.sql:ro
     ports:
       - "5432:5432"
     healthcheck:

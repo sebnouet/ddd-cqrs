@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Fleet\App\QueryHandler;
 
 use Fleet\App\Query\IsVehicleRegistered;
-use Fleet\Domain\FleetId;
-use Fleet\Domain\FleetRepository;
-use Fleet\Domain\PlateNumber;
+use Fleet\Domain\Fleet\FleetId;
+use Fleet\Domain\Fleet\FleetRepository;
+use Fleet\Domain\Vehicle\PlateNumber;
 
 final readonly class IsVehicleRegisteredHandler
 {

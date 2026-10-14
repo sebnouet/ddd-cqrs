@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fleet\Domain\Vehicle\Exception;
 
-use Fleet\Domain\FleetId;
-use Fleet\Domain\PlateNumber;
+use Fleet\Domain\Fleet\FleetId;
+use Fleet\Domain\Vehicle\PlateNumber;
 
 final class VehicleAlreadyRegistered extends \DomainException
 {

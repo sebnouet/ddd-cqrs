@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fleet\Domain\Fleet\Exception;
 
-use Fleet\Domain\FleetId;
+use Fleet\Domain\Fleet\FleetId;
 
 final class FleetNotFound extends \DomainException
 {

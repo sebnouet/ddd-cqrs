@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fleet\Domain\Location\Exception;
 
-use Fleet\Domain\PlateNumber;
+use Fleet\Domain\Vehicle\PlateNumber;
 
 final class VehicleAlreadyParkedAtLocation extends \DomainException
 {

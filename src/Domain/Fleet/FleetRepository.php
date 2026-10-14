@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fleet\Domain;
+namespace Fleet\Domain\Fleet;
 
 use Fleet\Domain\Fleet\Exception\FleetNotFound;
 

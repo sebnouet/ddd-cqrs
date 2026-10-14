@@ -1,6 +1,15 @@
 default:
   suites:
-    default:
+    memory:
       paths: ['%paths.base%/features']
       contexts:
-        - Fleet\Tests\Behat\FeatureContext
+        - Fleet\Tests\Behat\FeatureContext:
+            infrastructure: memory
+
+    postgres:
+      paths: ['%paths.base%/features']
+      filters:
+        tags: '@critical'
+      contexts:
+        - Fleet\Tests\Behat\FeatureContext:
+            infrastructure: postgres

@@ -5,7 +5,8 @@
     "license": "proprietary",
     "require": {
         "php": "^8.3",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "symfony/console": "^7.4"
     },
     "require-dev": {
         "behat/behat": "^3.14"

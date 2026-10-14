@@ -18,16 +18,22 @@ use Fleet\App\Query\GetVehicleLocation;
 use Fleet\App\Query\IsVehicleRegistered;
 use Fleet\App\QueryHandler\GetVehicleLocationHandler;
 use Fleet\App\QueryHandler\IsVehicleRegisteredHandler;
-use Fleet\Domain\FleetRepository;
-use Fleet\Domain\Location;
+use Fleet\Domain\Fleet\FleetRepository;
 use Fleet\Domain\Location\Exception\VehicleAlreadyParkedAtLocation;
+use Fleet\Domain\Location\Location;
 use Fleet\Domain\Vehicle\Exception\VehicleAlreadyRegistered;
-use Fleet\Infra\MemoryFleetRepository;
+use Fleet\Domain\Vehicle\VehicleRepository;
+use Fleet\Infra\Factory\PostgresConnectionFactory;
+use Fleet\Infra\Repository\MemoryFleetRepository;
+use Fleet\Infra\Repository\MemoryVehicleRepository;
+use Fleet\Infra\Repository\PostgresFleetRepository;
+use Fleet\Infra\Repository\PostgresVehicleRepository;
 use Throwable;
 
 final class FeatureContext implements Context
 {
-    private readonly FleetRepository $repository;
+    private readonly FleetRepository $fleetRepository;
+    private readonly VehicleRepository $vehicleRepository;
 
     private string $myFleetId;
     private string $otherFleetId;
@@ -35,9 +41,17 @@ final class FeatureContext implements Context
     private Location $location;
     private ?Throwable $caughtException = null;
 
-    public function __construct()
+    public function __construct(string $infrastructure = 'memory')
     {
-        $this->repository = new MemoryFleetRepository();
+        if ('postgres' === $infrastructure) {
+            $connection = PostgresConnectionFactory::fromEnvironment('DATABASE_TEST_DSN');
+            $connection->exec('TRUNCATE fleet, vehicle CASCADE');
+            $this->fleetRepository = new PostgresFleetRepository($connection);
+            $this->vehicleRepository = new PostgresVehicleRepository($connection);
+        } else {
+            $this->fleetRepository = new MemoryFleetRepository();
+            $this->vehicleRepository = new MemoryVehicleRepository();
+        }
     }
 
     #[Given('my fleet')]
@@ -61,7 +75,7 @@ final class FeatureContext implements Context
     #[Given('a location')]
     public function aLocation(): void
     {
-        $this->location = new Location(43.373522, 5.504592);
+        $this->location = new Location(43.373522, 5.504592, 152.5);
     }
 
     #[Given('I have registered this vehicle into my fleet')]
@@ -107,7 +121,7 @@ final class FeatureContext implements Context
     #[Then('this vehicle should be part of my vehicle fleet')]
     public function thisVehicleShouldBePartOfMyVehicleFleet(): void
     {
-        $handler = new IsVehicleRegisteredHandler($this->repository);
+        $handler = new IsVehicleRegisteredHandler($this->fleetRepository);
         $command = new IsVehicleRegistered($this->myFleetId, $this->plateNumber);
         $isRegistered = $handler($command);
 
@@ -126,7 +140,7 @@ final class FeatureContext implements Context
     #[Then('the known location of my vehicle should verify this location')]
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation(): void
     {
-        $handler = new GetVehicleLocationHandler($this->repository);
+        $handler = new GetVehicleLocationHandler($this->fleetRepository, $this->vehicleRepository);
         $command = new GetVehicleLocation($this->myFleetId, $this->plateNumber);
         $knownLocation = $handler($command);
 
@@ -147,21 +161,21 @@ final class FeatureContext implements Context
 
     private function createFleet(string $userId): string
     {
-        $handler = new CreateFleetHandler($this->repository);
+        $handler = new CreateFleetHandler($this->fleetRepository);
         $command = new CreateFleet($userId);
         return $handler($command);
     }
 
     private function registerVehicle(string $fleetId): void
     {
-        $handler = new RegisterVehicleHandler($this->repository);
+        $handler = new RegisterVehicleHandler($this->fleetRepository, $this->vehicleRepository);
         $command = new RegisterVehicle($fleetId, $this->plateNumber);
         $handler($command);
     }
 
     private function parkVehicle(): void
     {
-        $handler = new ParkVehicleHandler($this->repository);
+        $handler = new ParkVehicleHandler($this->fleetRepository, $this->vehicleRepository);
         $command = new ParkVehicle(
             $this->myFleetId,
             $this->plateNumber,

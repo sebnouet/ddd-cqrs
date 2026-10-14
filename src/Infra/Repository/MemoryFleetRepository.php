@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Fleet\Infra;
+namespace Fleet\Infra\Repository;
 
-use Fleet\Domain\Fleet;
 use Fleet\Domain\Fleet\Exception\FleetNotFound;
-use Fleet\Domain\FleetId;
-use Fleet\Domain\FleetRepository;
+use Fleet\Domain\Fleet\Fleet;
+use Fleet\Domain\Fleet\FleetId;
+use Fleet\Domain\Fleet\FleetRepository;
 
 final class MemoryFleetRepository implements FleetRepository
 {
