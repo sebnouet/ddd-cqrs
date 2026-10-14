@@ -1,0 +1,26 @@
+{
+    "name": "seb/ddd-cqrs",
+    "description": "DDD- CQRS technical test",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+        "behat/behat": "^3.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fleet\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fleet\\Tests\\Behat\\": "features/bootstrap/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
