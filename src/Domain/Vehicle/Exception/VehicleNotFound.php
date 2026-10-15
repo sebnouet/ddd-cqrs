@@ -10,6 +10,6 @@ final class VehicleNotFound extends \DomainException
 {
     public function __construct(PlateNumber $plateNumber)
     {
-        parent::__construct(sprintf('Vehicle "%s" not found.', $plateNumber));
+        parent::__construct(\sprintf('Vehicle "%s" not found.', $plateNumber));
     }
 }

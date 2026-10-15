@@ -12,10 +12,10 @@ final readonly class Location
         public ?float $altitude = null,
     ) {
         if ($latitude < -90 || $latitude > 90) {
-            throw new \InvalidArgumentException(sprintf('Invalid latitude "%s".', $latitude));
+            throw new \InvalidArgumentException(\sprintf('Invalid latitude "%s".', $latitude));
         }
         if ($longitude < -180 || $longitude > 180) {
-            throw new \InvalidArgumentException(sprintf('Invalid longitude "%s".', $longitude));
+            throw new \InvalidArgumentException(\sprintf('Invalid longitude "%s".', $longitude));
         }
     }
 

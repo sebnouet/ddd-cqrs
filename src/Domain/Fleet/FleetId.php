@@ -9,7 +9,7 @@ final readonly class FleetId implements \Stringable
     public function __construct(public string $value)
     {
         if (!preg_match('/^[0-9a-f]{32}$/', $value)) {
-            throw new \InvalidArgumentException(sprintf('Invalid fleet id "%s".', $value));
+            throw new \InvalidArgumentException(\sprintf('Invalid fleet id "%s".', $value));
         }
     }
 

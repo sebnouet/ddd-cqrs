@@ -20,7 +20,7 @@ final class PostgresConnectionFactory
     {
         $value = getenv($name);
         if (false === $value) {
-            throw new \RuntimeException(sprintf('Environment variable "%s" is not defined.', $name));
+            throw new \RuntimeException(\sprintf('Environment variable "%s" is not defined.', $name));
         }
 
         return $value;

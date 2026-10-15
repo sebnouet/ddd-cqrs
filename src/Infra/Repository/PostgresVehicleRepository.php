@@ -42,7 +42,8 @@ final readonly class PostgresVehicleRepository implements VehicleRepository
 
     public function save(Vehicle $vehicle): void
     {
-        $this->connection->prepare('
+        $this->connection->prepare(
+            '
                 INSERT INTO vehicle (plate_number, latitude, longitude, altitude)
                 VALUES (:plate_number, :latitude, :longitude, :altitude)
                 ON CONFLICT (plate_number)

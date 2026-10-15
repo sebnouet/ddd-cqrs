@@ -10,6 +10,6 @@ final class FleetNotFound extends \DomainException
 {
     public function __construct(FleetId $fleetId)
     {
-        parent::__construct(sprintf('Fleet "%s" not found.', $fleetId));
+        parent::__construct(\sprintf('Fleet "%s" not found.', $fleetId));
     }
 }

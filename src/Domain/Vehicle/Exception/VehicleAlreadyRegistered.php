@@ -11,6 +11,6 @@ final class VehicleAlreadyRegistered extends \DomainException
 {
     public function __construct(PlateNumber $plateNumber, FleetId $fleetId)
     {
-        parent::__construct(sprintf('Vehicle "%s" is already registered into fleet "%s".', $plateNumber, $fleetId));
+        parent::__construct(\sprintf('Vehicle "%s" is already registered into fleet "%s".', $plateNumber, $fleetId));
     }
 }
