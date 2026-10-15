@@ -1,0 +1,27 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Fleet\App\CommandHandler\CreateFleetHandler;
+use Fleet\App\CommandHandler\ParkVehicleHandler;
+use Fleet\App\CommandHandler\RegisterVehicleHandler;
+use Fleet\Infra\Cli\CreateFleetCommand;
+use Fleet\Infra\Cli\LocalizeVehicleCommand;
+use Fleet\Infra\Cli\RegisterVehicleCommand;
+use Fleet\Infra\Factory\PostgresConnectionFactory;
+use Fleet\Infra\Repository\PostgresFleetRepository;
+use Fleet\Infra\Repository\PostgresVehicleRepository;
+use Symfony\Component\Console\Application;
+
+require __DIR__.'/vendor/autoload.php';
+
+$connection = PostgresConnectionFactory::fromEnvironment();
+$fleetRepository = new PostgresFleetRepository($connection);
+$vehicleRepository = new PostgresVehicleRepository($connection);
+
+$application = new Application('fleet');
+$application->addCommand(new CreateFleetCommand(new CreateFleetHandler($fleetRepository)));
+$application->addCommand(new RegisterVehicleCommand(new RegisterVehicleHandler($fleetRepository, $vehicleRepository)));
+$application->addCommand(new LocalizeVehicleCommand(new ParkVehicleHandler($fleetRepository, $vehicleRepository)));
+$application->run();

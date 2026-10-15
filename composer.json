@@ -1,0 +1,33 @@
+{
+    "name": "seb/ddd-cqrs",
+    "description": "DDD- CQRS technical test",
+    "version": "1.0.0",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "ext-pdo": "*",
+        "symfony/console": "^7.4"
+    },
+    "require-dev": {
+        "behat/behat": "^3.14",
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^12.5",
+        "rector/rector": "^2.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fleet\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fleet\\Tests\\Behat\\": "features/bootstrap/",
+            "Fleet\\Tests\\Unit\\": "tests/Unit/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
