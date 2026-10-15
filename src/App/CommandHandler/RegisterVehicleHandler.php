@@ -24,7 +24,7 @@ final readonly class RegisterVehicleHandler
         $plateNumber = new PlateNumber($command->plateNumber);
         $fleet = $this->fleetRepository->get(new FleetId($command->fleetId));
 
-        if (null === $this->vehicleRepository->find($plateNumber)) {
+        if (!$this->vehicleRepository->find($plateNumber) instanceof Vehicle) {
             $this->vehicleRepository->save(new Vehicle($plateNumber));
         }
 

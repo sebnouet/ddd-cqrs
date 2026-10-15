@@ -21,23 +21,26 @@ final readonly class PostgresFleetRepository implements FleetRepository
     {
         $statement = $this->connection->prepare('SELECT user_id FROM fleet WHERE id = :id');
         $statement->execute(['id' => $id->value]);
+        /** @var string|false $userId */
         $userId = $statement->fetchColumn();
         if (false === $userId) {
             throw new FleetNotFound($id);
         }
 
-        $statement = $this->connection->prepare(<<<'SQL'
-            SELECT vehicle.plate_number
-            FROM fleet_vehicle
-            JOIN vehicle ON vehicle.id = fleet_vehicle.vehicle_id
-            WHERE fleet_vehicle.fleet_id = :id
-            SQL
+        $statement = $this->connection->prepare(
+            '
+                SELECT vehicle.plate_number
+                FROM fleet_vehicle
+                JOIN vehicle ON vehicle.id = fleet_vehicle.vehicle_id
+                WHERE fleet_vehicle.fleet_id = :id'
         );
         $statement->execute(['id' => $id->value]);
+        /** @var list<string> $plateNumbers */
+        $plateNumbers = $statement->fetchAll(\PDO::FETCH_COLUMN);
 
         $vehicles = array_map(
-            static fn(string $plateNumber) => new PlateNumber($plateNumber),
-            $statement->fetchAll(\PDO::FETCH_COLUMN),
+            static fn (string $plateNumber): PlateNumber => new PlateNumber($plateNumber),
+            $plateNumbers,
         );
 
         return new Fleet($id, new UserId($userId), $vehicles);
@@ -52,9 +55,9 @@ final readonly class PostgresFleetRepository implements FleetRepository
                 ->prepare('INSERT INTO fleet (id, user_id) VALUES (:id, :user_id) ON CONFLICT (id) DO NOTHING')
                 ->execute(['id' => $fleet->id->value, 'user_id' => $fleet->userId->value]);
 
-            $statement = $this->connection->prepare("INSERT INTO fleet_vehicle (fleet_id, vehicle_id)
+            $statement = $this->connection->prepare('INSERT INTO fleet_vehicle (fleet_id, vehicle_id)
                 SELECT :fleet_id, id FROM vehicle WHERE plate_number = :plate_number
-                ON CONFLICT DO NOTHING");
+                ON CONFLICT DO NOTHING');
 
             foreach ($fleet->vehicles() as $plateNumber) {
                 $statement->execute(['fleet_id' => $fleet->id->value, 'plate_number' => $plateNumber->value]);

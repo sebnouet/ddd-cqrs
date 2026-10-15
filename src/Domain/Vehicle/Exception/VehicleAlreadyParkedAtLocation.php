@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Fleet\Domain\Location\Exception;
+namespace Fleet\Domain\Vehicle\Exception;
 
 use Fleet\Domain\Vehicle\PlateNumber;
 

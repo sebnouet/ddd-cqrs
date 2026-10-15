@@ -1,0 +1,11 @@
+<?php
+
+declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+
+return RectorConfig::configure()
+    ->withPaths([__DIR__.'/src', __DIR__.'/features/bootstrap', __DIR__.'/tests'])
+    ->withPhpSets()
+    ->withImportNames(importShortClasses: false)
+    ->withPreparedSets(deadCode: true, codeQuality: true, typeDeclarations: true, earlyReturn: true);

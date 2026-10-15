@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Fleet\Infra\Factory;
 
-use PDO;
-
 final class PostgresConnectionFactory
 {
-    public static function fromEnvironment(string $dsnVariable = 'DATABASE_DSN'): PDO
+    public static function fromEnvironment(string $dsnVariable = 'DATABASE_DSN'): \PDO
     {
-        return new PDO(
+        return new \PDO(
             self::env($dsnVariable),
             self::env('DATABASE_USER'),
             self::env('DATABASE_PASSWORD'),
-            [PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC],
+            [\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC],
         );
     }
 

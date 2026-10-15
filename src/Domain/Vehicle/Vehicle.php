@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Fleet\Domain\Vehicle;
 
-use Fleet\Domain\Location\Exception\VehicleAlreadyParkedAtLocation;
 use Fleet\Domain\Location\Location;
+use Fleet\Domain\Vehicle\Exception\VehicleAlreadyParkedAtLocation;
 
 final class Vehicle
 {

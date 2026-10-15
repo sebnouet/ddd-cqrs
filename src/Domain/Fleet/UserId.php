@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fleet\Domain\Fleet;
 
-final readonly class UserId
+final readonly class UserId implements \Stringable
 {
     public function __construct(public string $value)
     {

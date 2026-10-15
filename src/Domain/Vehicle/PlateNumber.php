@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Fleet\Domain\Vehicle;
 
-final readonly class PlateNumber
+final readonly class PlateNumber implements \Stringable
 {
     public string $value;
 

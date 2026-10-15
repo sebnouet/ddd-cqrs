@@ -18,11 +18,16 @@ final readonly class LocalizeVehicleCommand
     }
 
     public function __invoke(
-        #[Argument] string $fleetId,
-        #[Argument] string $vehiclePlateNumber,
-        #[Argument] float $lat,
-        #[Argument] float $lng,
-        #[Argument] ?float $alt = null,
+        #[Argument]
+        string $fleetId,
+        #[Argument]
+        string $vehiclePlateNumber,
+        #[Argument]
+        float $lat,
+        #[Argument]
+        float $lng,
+        #[Argument]
+        ?float $alt = null,
     ): int {
         ($this->handler)(new ParkVehicle($fleetId, $vehiclePlateNumber, $lat, $lng, $alt));
 

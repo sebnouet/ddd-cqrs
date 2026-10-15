@@ -8,7 +8,6 @@ use Fleet\App\Query\GetVehicleLocation;
 use Fleet\Domain\Fleet\FleetId;
 use Fleet\Domain\Fleet\FleetRepository;
 use Fleet\Domain\Location\Location;
-use Fleet\Domain\Vehicle\Exception\VehicleNotRegistered;
 use Fleet\Domain\Vehicle\PlateNumber;
 use Fleet\Domain\Vehicle\VehicleRepository;
 
@@ -24,12 +23,8 @@ final readonly class GetVehicleLocationHandler
     {
         $plateNumber = new PlateNumber($query->plateNumber);
         $fleet = $this->fleetRepository->get(new FleetId($query->fleetId));
+        $fleet->assertHasVehicle($plateNumber);
 
-        $vehicle = $fleet->hasVehicle($plateNumber) ? $this->vehicleRepository->find($plateNumber) : null;
-        if (null === $vehicle) {
-            throw new VehicleNotRegistered($plateNumber, $fleet->id);
-        }
-
-        return $vehicle->location();
+        return $this->vehicleRepository->get($plateNumber)->location();
     }
 }

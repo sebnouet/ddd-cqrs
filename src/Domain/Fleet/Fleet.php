@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Fleet\Domain\Fleet;
 
 use Fleet\Domain\Vehicle\Exception\VehicleAlreadyRegistered;
+use Fleet\Domain\Vehicle\Exception\VehicleNotRegistered;
 use Fleet\Domain\Vehicle\PlateNumber;
 
 final class Fleet
@@ -45,5 +46,12 @@ final class Fleet
     public function vehicles(): array
     {
         return array_values($this->vehicles);
+    }
+
+    public function assertHasVehicle(PlateNumber $plateNumber): void
+    {
+        if (!$this->hasVehicle($plateNumber)) {
+            throw new VehicleNotRegistered($plateNumber, $this->id);
+        }
     }
 }

@@ -19,8 +19,8 @@ use Fleet\App\Query\IsVehicleRegistered;
 use Fleet\App\QueryHandler\GetVehicleLocationHandler;
 use Fleet\App\QueryHandler\IsVehicleRegisteredHandler;
 use Fleet\Domain\Fleet\FleetRepository;
-use Fleet\Domain\Location\Exception\VehicleAlreadyParkedAtLocation;
 use Fleet\Domain\Location\Location;
+use Fleet\Domain\Vehicle\Exception\VehicleAlreadyParkedAtLocation;
 use Fleet\Domain\Vehicle\Exception\VehicleAlreadyRegistered;
 use Fleet\Domain\Vehicle\VehicleRepository;
 use Fleet\Infra\Factory\PostgresConnectionFactory;
@@ -28,7 +28,6 @@ use Fleet\Infra\Repository\MemoryFleetRepository;
 use Fleet\Infra\Repository\MemoryVehicleRepository;
 use Fleet\Infra\Repository\PostgresFleetRepository;
 use Fleet\Infra\Repository\PostgresVehicleRepository;
-use Throwable;
 
 final class FeatureContext implements Context
 {
@@ -39,7 +38,7 @@ final class FeatureContext implements Context
     private string $otherFleetId;
     private string $plateNumber;
     private Location $location;
-    private ?Throwable $caughtException = null;
+    private ?\Throwable $caughtException = null;
 
     public function __construct(string $infrastructure = 'memory')
     {
@@ -96,7 +95,7 @@ final class FeatureContext implements Context
     {
         try {
             $this->registerVehicle($this->myFleetId);
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->caughtException = $e;
         }
     }
@@ -113,7 +112,7 @@ final class FeatureContext implements Context
     {
         try {
             $this->parkVehicle();
-        } catch (Throwable $e) {
+        } catch (\Throwable $e) {
             $this->caughtException = $e;
         }
     }
@@ -122,47 +121,39 @@ final class FeatureContext implements Context
     public function thisVehicleShouldBePartOfMyVehicleFleet(): void
     {
         $handler = new IsVehicleRegisteredHandler($this->fleetRepository);
-        $command = new IsVehicleRegistered($this->myFleetId, $this->plateNumber);
-        $isRegistered = $handler($command);
+        $query = new IsVehicleRegistered($this->myFleetId, $this->plateNumber);
+        $isRegistered = $handler($query);
 
-        self::assert($isRegistered, 'The vehicle is not part of my fleet.');
+        $this->assert($isRegistered, 'The vehicle is not part of my fleet.');
     }
 
     #[Then('I should be informed that this vehicle has already been registered into my fleet')]
     public function iShouldBeInformedThatVehicleHasAlreadyBeenRegistered(): void
     {
-        self::assert(
-            $this->caughtException instanceof VehicleAlreadyRegistered,
-            'Expected a VehicleAlreadyRegistered exception.',
-        );
+        $this->assert($this->caughtException instanceof VehicleAlreadyRegistered, 'Expected a VehicleAlreadyRegistered exception.');
     }
 
     #[Then('the known location of my vehicle should verify this location')]
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation(): void
     {
         $handler = new GetVehicleLocationHandler($this->fleetRepository, $this->vehicleRepository);
-        $command = new GetVehicleLocation($this->myFleetId, $this->plateNumber);
-        $knownLocation = $handler($command);
+        $query = new GetVehicleLocation($this->myFleetId, $this->plateNumber);
+        $knownLocation = $handler($query);
 
-        self::assert(
-            $knownLocation?->equals($this->location) === true,
-            'The known location of my vehicle does not match.',
-        );
+        $this->assert(true === $knownLocation?->equals($this->location), 'The known location of my vehicle does not match.');
     }
 
     #[Then('I should be informed that my vehicle is already parked at this location')]
     public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation(): void
     {
-        self::assert(
-            $this->caughtException instanceof VehicleAlreadyParkedAtLocation,
-            'Expected a VehicleAlreadyParkedAtLocation exception.',
-        );
+        $this->assert($this->caughtException instanceof VehicleAlreadyParkedAtLocation, 'Expected a VehicleAlreadyParkedAtLocation exception.');
     }
 
     private function createFleet(string $userId): string
     {
         $handler = new CreateFleetHandler($this->fleetRepository);
         $command = new CreateFleet($userId);
+
         return $handler($command);
     }
 
@@ -186,7 +177,7 @@ final class FeatureContext implements Context
         $handler($command);
     }
 
-    private static function assert(bool $condition, string $message): void
+    private function assert(bool $condition, string $message): void
     {
         if (!$condition) {
             throw new \RuntimeException($message);

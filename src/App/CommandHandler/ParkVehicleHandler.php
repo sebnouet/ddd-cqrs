@@ -8,7 +8,6 @@ use Fleet\App\Command\ParkVehicle;
 use Fleet\Domain\Fleet\FleetId;
 use Fleet\Domain\Fleet\FleetRepository;
 use Fleet\Domain\Location\Location;
-use Fleet\Domain\Vehicle\Exception\VehicleNotRegistered;
 use Fleet\Domain\Vehicle\PlateNumber;
 use Fleet\Domain\Vehicle\VehicleRepository;
 
@@ -24,11 +23,9 @@ final readonly class ParkVehicleHandler
     {
         $plateNumber = new PlateNumber($command->plateNumber);
         $fleet = $this->fleetRepository->get(new FleetId($command->fleetId));
+        $fleet->assertHasVehicle($plateNumber);
 
-        $vehicle = $fleet->hasVehicle($plateNumber) ? $this->vehicleRepository->find($plateNumber) : null;
-        if (null === $vehicle) {
-            throw new VehicleNotRegistered($plateNumber, $fleet->id);
-        }
+        $vehicle = $this->vehicleRepository->get($plateNumber);
 
         $vehicle->park(new Location($command->latitude, $command->longitude, $command->altitude));
         $this->vehicleRepository->save($vehicle);
